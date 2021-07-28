@@ -76,9 +76,34 @@ class RouterCore{
                 if (is_callable($get['call'])) {
                     $get['call']();
                     break;
+                }else{
+                    $this->executeController($get['call']);
                 }
             }
         }
+    }
+
+    private function executeController($get){
+        $ex = explode('@', $get);
+        
+        if (!isset($ex[0]) || !isset($ex[1])) {
+            (new \App\Controller\MessageController)->message('Dados invalidos','Controller ou metodo não encontrado', 404);
+            return;
+        }
+
+        $controller = 'App\\Controller\\'. $ex[0];
+
+        if (!class_exists($controller)) {
+            (new \App\Controller\MessageController)->message('Dados invalidos','Controller não encontrado', 404);
+            return;
+        }
+
+        if (!method_exists($controller, $ex[1])) {
+            (new \App\Controller\MessageController)->message('Dados invalidos','Metodo não encontrado', 404);
+            return;
+        }
+
+        call_user_func_array([new $controller, $ex[1]],[]);
     }
 
 }
