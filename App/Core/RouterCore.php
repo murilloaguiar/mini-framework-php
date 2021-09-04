@@ -17,6 +17,10 @@ class RouterCore{
         
         $uri = $_SERVER['REQUEST_URI'];
 
+        if (strpos($uri, '?')) {
+            $uri = mb_substr($uri, 0, strpos($uri, '?'));
+        }
+
         $ex = explode('/', $uri);
 
         $uri = $this->normalizeURI($ex);
